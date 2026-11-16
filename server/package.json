@@ -1,0 +1,23 @@
+{
+  "name": "liora-assistant-relay",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Serveur relais de l'assistant LIORA : garde la clé de l'API hors de l'application.",
+  "type": "module",
+  "engines": {
+    "node": ">=22.18"
+  },
+  "scripts": {
+    "start": "node --env-file-if-exists=.env src/index.ts",
+    "test": "node --test test/*.test.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^1.8.0",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "typescript": "~6.0.3"
+  }
+}

@@ -1,0 +1,86 @@
+{
+  "expo": {
+    "name": "LIORA",
+    "slug": "liora",
+    "scheme": "liora",
+    "version": "1.5.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.liora.app",
+      "infoPlist": {
+        "LSApplicationQueriesSchemes": [
+          "tel",
+          "sms"
+        ],
+        "ITSAppUsesNonExemptEncryption": false
+      }
+    },
+    "android": {
+      "package": "com.liora.app",
+      "adaptiveIcon": {
+        "backgroundColor": "#FCF1EE",
+        "foregroundImage": "./assets/android-icon-foreground.png"
+      },
+      "predictiveBackGestureEnabled": false
+    },
+    "web": {
+      "favicon": "./assets/favicon.png",
+      "bundler": "metro",
+      "output": "single"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-secure-store",
+      "expo-font",
+      [
+        "expo-audio",
+        {
+          "microphonePermission": false,
+          "recordAudioAndroid": false,
+          "enableBackgroundPlayback": true
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "LIORA accède à vos photos pour illustrer votre profil, vos proches et votre journal.",
+          "cameraPermission": false,
+          "microphonePermission": false
+        }
+      ],
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "LIORA utilise la caméra pour le scan du visage, uniquement lorsque vous le demandez.",
+          "microphonePermission": false,
+          "recordAudioAndroid": false,
+          "barcodeScannerEnabled": false
+        }
+      ],
+      [
+        "expo-local-authentication",
+        {
+          "faceIDPermission": "LIORA utilise Face ID pour déverrouiller votre coffre-fort."
+        }
+      ],
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/splash-icon.png",
+          "imageWidth": 180,
+          "resizeMode": "contain",
+          "backgroundColor": "#FCF1EE"
+        }
+      ],
+      "expo-sharing",
+      "expo-status-bar",
+      "expo-asset"
+    ],
+    "experiments": {
+      "typedRoutes": false
+    }
+  }
+}

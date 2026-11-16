@@ -1,0 +1,37 @@
+# Déploiement du serveur relais de LIORA sur Render (render.com).
+# Dans Render : New > Blueprint, puis choisissez ce dépôt. Les valeurs marquées
+# « sync: false » vous sont demandées à ce moment-là et ne sont jamais écrites ici.
+services:
+  - type: web
+    name: liora-relais
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    region: frankfurt
+    plan: starter
+    healthCheckPath: /health
+    autoDeploy: false
+    envVars:
+      # Clé de l'API Anthropic (console.anthropic.com).
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      # Même valeur que EXPO_PUBLIC_ASSISTANT_TOKEN dans l'application.
+      - key: LIORA_APP_TOKEN
+        sync: false
+      # Secret du serveur seul : Render le tire au hasard.
+      - key: LIORA_SESSION_SECRET
+        generateValue: true
+      # Compteurs Redis partagés et persistants (API REST Upstash).
+      - key: LIORA_REDIS_REST_URL
+        sync: false
+      - key: LIORA_REDIS_REST_TOKEN
+        sync: false
+      # Render place un serveur intermédiaire devant le relais.
+      - key: LIORA_TRUST_PROXY
+        value: "1"
+      - key: LIORA_ASSISTANT_PER_DAY
+        value: "150"
+      - key: LIORA_MOOD_PER_DAY
+        value: "20"
+      - key: LIORA_GLOBAL_PER_DAY
+        value: "5000"

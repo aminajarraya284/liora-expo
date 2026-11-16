@@ -1,0 +1,6 @@
+{
+  "name": "Liora",
+  "description": "Prototype cliquable de l'application Liora — Assistant de sérénité et d'organisation pour les seniors actifs.",
+  "requestFramePermissions": ["camera", "microphone"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

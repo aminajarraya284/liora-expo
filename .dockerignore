@@ -1,0 +1,6 @@
+# Le serveur n'a besoin que de « server/ » et de « shared/ ».
+*
+!server/package.json
+!server/package-lock.json
+!server/src
+!shared
