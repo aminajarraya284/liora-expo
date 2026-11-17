@@ -87,4 +87,4 @@ export const DEFAULT_SETTINGS: Settings = {
   faceScanConsent: false,
 };
 
-export type Result = { ok: true } | { ok: false; error: string };
+export type Result = { ok: true; message?: string } | { ok: false; error: string };

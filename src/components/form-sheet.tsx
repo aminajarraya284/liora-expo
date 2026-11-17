@@ -65,9 +65,11 @@ function FormBody({ title, fields, initial, onClose, onSubmit, onDelete, submitL
   const set = (key: string, value: unknown) => setValues((current) => ({ ...current, [key]: value }));
 
   const pickImage = async (key: string) => {
+    try {
     const result = await ImagePicker.launchImageLibraryAsync({ mediaTypes: ['images'], quality: 0.7, allowsEditing: true, aspect: [1, 1] });
     const asset = result.canceled ? null : result.assets[0];
     if (asset) set(key, await persistFile(asset.uri, asset.fileName ?? 'photo.jpg'));
+    } catch { setFormError('La photo n’a pas pu être préparée. Choisissez une image plus petite.'); }
   };
 
   const validate = (): Record<string, string> => {

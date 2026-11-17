@@ -3,6 +3,7 @@ import * as Speech from 'expo-speech';
 import React, { useState } from 'react';
 import { type ImageSourcePropType, View } from 'react-native';
 import { APP_VERSION } from '../../../config';
+import { CloudSyncCard } from '../../../components/cloud-sync-card';
 import { assistantConfigured } from '../../../features/assistant/relay';
 import { passwordError } from '../../../lib';
 import { PHOTOS } from '../../../photos';
@@ -36,37 +37,38 @@ function Notifications() {
 }
 
 function Confidentialite() {
-  const { logout, changePassword, deleteAccount, user, encryption } = useStore();
+  const { logout, changePassword, deleteAccount, user, encryption, accountMode } = useStore();
   const dialog = useDialog();
   const palette = usePalette();
   const [sheet, setSheet] = useState<null | 'password' | 'delete'>(null);
   const encrypted = encryption === 'active';
 
   const signOut = async () => {
-    if (await dialog.confirm({ title: 'Se déconnecter ?', message: 'Vos informations restent enregistrées sur cet appareil.', ok: 'Se déconnecter' })) {
+    if (await dialog.confirm({ title: 'Se déconnecter ?', message: 'Votre session sur ce téléphone sera fermée.', ok: 'Se déconnecter' })) {
       const result = await logout();
       if (!result.ok) await dialog.alert('Sauvegarde nécessaire', result.error);
     }
   };
   const askDelete = async () => {
-    const sure = await dialog.confirm({ title: 'Supprimer le compte ?', message: 'Toutes vos données et tous vos documents seront effacés de cet appareil. Cette action est irréversible.', ok: 'Continuer', danger: true });
+    const sure = await dialog.confirm({ title: 'Supprimer le compte ?', message: accountMode === 'cloud' ? 'Votre compte en ligne, ses données et ses documents seront supprimés, ainsi que sa copie sur ce téléphone. Une connexion Internet est nécessaire. Cette action est irréversible.' : 'Toutes vos données et tous vos documents seront effacés de cet appareil. Cette action est irréversible.', ok: 'Continuer', danger: true });
     if (sure) setSheet('delete');
   };
 
   return (
     <>
-      <Card>
+      <CloudSyncCard />
+      <Card style={{ marginTop: 12 }}>
         <View style={{ flexDirection: 'row', gap: 12, alignItems: 'center' }}>
           <Icon name="shield-checkmark-outline" size={34} color={palette.ink} />
-          <T style={{ flex: 1 }}>Vos informations sont enregistrées sur cet appareil uniquement. Elles ne sont transmises à aucun tiers.</T>
+          <T style={{ flex: 1 }}>{accountMode === 'cloud' ? 'Le compte d’essai synchronise ses informations et ses fichiers privés. L’accès est limité à votre compte.' : 'Vos informations sont enregistrées sur cet appareil. L’assistant et le scan transmettent les éléments nécessaires lorsque vous les utilisez avec votre accord.'}</T>
         </View>
       </Card>
       <Card pad={12} style={{ marginTop: 12, paddingVertical: 4 }}>
         <Row
           plainIcon
           icon={encrypted ? 'lock-closed-outline' : 'lock-open-outline'}
-          title="Chiffrement des données"
-          subtitle={encrypted ? 'Actif : vos données sont illisibles sans ce téléphone' : 'Indisponible sur cet appareil'}
+          title="Chiffrement sur ce téléphone"
+          subtitle={encrypted ? 'Actif : votre copie locale est chiffrée' : 'Indisponible sur cet appareil'}
           right={<Icon name={encrypted ? 'checkmark-circle' : 'alert-circle'} size={26} color={encrypted ? C.ok : C.danger} />}
         />
         <Divider />
@@ -91,7 +93,7 @@ function Confidentialite() {
           const result = await changePassword(values.current, values.next);
           if (!result.ok) return result.error;
           setSheet(null);
-          dialog.alert('Mot de passe modifié', 'Votre nouveau mot de passe est enregistré.');
+          dialog.alert('Mot de passe modifié', result.message ?? 'Votre nouveau mot de passe est enregistré.');
         }}
       />
       <FormSheet

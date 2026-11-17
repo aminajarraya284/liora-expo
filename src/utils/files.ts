@@ -1,18 +1,17 @@
 import { File, Paths } from 'expo-file-system';
 import { Platform } from 'react-native';
+import { ImageManipulator, SaveFormat } from 'expo-image-manipulator';
 
-const safeName = (name: string) => name.replace(/[^\w.\-]/g, '_').slice(-80);
-
-/** Copie une photo choisie par l'utilisateur dans le dossier permanent de l'application. */
-export async function persistFile(uri: string, name: string): Promise<string> {
-  if (Platform.OS === 'web') return uri;
-  try {
-    const dest = new File(Paths.document, `${Date.now()}-${safeName(name)}`);
-    await new File(uri).copy(dest);
-    return dest.uri;
-  } catch {
-    return uri;
+/** Photo réduite, intégrée à la sauvegarde chiffrée plutôt que conservée en clair. */
+export async function persistFile(uri: string, _name: string): Promise<string> {
+  const image = await ImageManipulator.manipulate(uri).resize({ width: 640 }).renderAsync();
+  const saved = await image.saveAsync({ base64: true, compress: 0.65, format: SaveFormat.JPEG });
+  if (Platform.OS !== 'web') {
+    if (uri.startsWith(Paths.cache.uri)) removeFile(uri);
+    removeFile(saved.uri);
   }
+  if (!saved.base64 || saved.base64.length > 1_398_104) throw new Error('PHOTO_TOO_LARGE');
+  return `data:image/jpeg;base64,${saved.base64}`;
 }
 
 /** Supprime un fichier appartenant à l'application. Sans effet pour toute autre adresse. */

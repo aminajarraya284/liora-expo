@@ -16,9 +16,49 @@ npm start
 Vérifications : `npm run typecheck`, `npm run lint`, `npm test`.
 
 La version web est un aperçu temporaire : utilisez uniquement des données fictives.
-Les comptes, clés et données de cet aperçu restent en mémoire et sont oubliés au
-rechargement de la page. Les anciennes données d'aperçu éventuellement présentes
+La copie locale, les clés et la connexion de cet aperçu restent en mémoire et
+sont oubliées au rechargement. Les données déjà synchronisées d'un compte en ligne
+restent sur Supabase. Les anciennes données d'aperçu éventuellement présentes
 dans le stockage du navigateur ne sont ni relues ni effacées automatiquement.
+
+## Comptes en ligne et synchronisation : essai fictif
+
+Le mode local reste disponible. Les comptes en ligne sont **désactivés par défaut**
+et ne sont pas encore reliés à un projet Supabase hébergé. Le guide
+[supabase/README.md](supabase/README.md) décrit la création d'un projet d'essai,
+la migration SQL, les e-mails avec codes de confirmation et la fonction de
+suppression du compte.
+
+Après cette configuration, renseignez votre `.env` local (ignoré par Git) avec
+`EXPO_PUBLIC_SUPABASE_URL`, une clé `EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY` commençant
+par `sb_publishable_`, puis `EXPO_PUBLIC_CLOUD_TRIAL=true`. Redémarrez Expo.
+N'utilisez ni clé secrète ni `service_role` dans l'application. Le mode en ligne
+est réservé aux **données fictives** ; son activation ne valide pas un hébergement
+de données de santé.
+
+- L'inscription en ligne vérifie l'e-mail avec un code. Un nouvel appareil récupère
+  la copie du compte après authentification. La première connexion exige Internet.
+- Sur mobile, une connexion mémorisée permet de rouvrir la copie chiffrée hors
+  ligne. Les modifications attendent localement puis sont réessayées au retour au
+  premier plan et toutes les 30 secondes lorsque l'application reste active.
+- Les profils, traitements, rendez-vous, humeurs, notes, liens, photos et documents
+  sont synchronisés. Les réglages et consentements restent propres à l'appareil.
+- Deux téléphones ayant modifié la même copie déclenchent un choix explicite dans
+  Paramètres → Confidentialité. Il n'y a pas d'écrasement silencieux d'une version.
+- Les nouveaux comptes en ligne sont séparés des anciens comptes locaux. Aucune
+  donnée locale existante n'est transférée automatiquement par adresse e-mail.
+- Les sessions et données locales sont chiffrées ; les clés restent dans le
+  trousseau natif. Les nouvelles photos sont réduites en JPEG de 640 px, au plus
+  1 Mio, et les documents sont limités à 20 Mio. Les gros enregistrements chiffrés
+  sont placés dans des fichiers privés pour éviter les limites SQLite d'Android.
+- Supabase protège la copie distante avec HTTPS, RLS et un bucket privé. Les
+  administrateurs du projet peuvent lire le contenu : ce n'est pas un chiffrement
+  de bout en bout. Les essais ne remplacent pas une revue de production.
+
+Les tests locaux couvrent les pannes, les reprises après fermeture, les conflits,
+les réponses perdues et l'isolation entre comptes. Les règles SQL sont exécutées
+dans PostgreSQL WASM avec Auth/Storage simulés. Les e-mails, les API Supabase réelles
+et une restauration sur deux téléphones restent à vérifier après création du projet.
 
 Les fichiers `src/App.tsx`, `src/main.tsx`, les anciens composants web nommés en
 PascalCase, `server.ts` et `vite.config.ts` appartiennent au prototype Vite. Ils ne
@@ -34,12 +74,15 @@ et les tests, ainsi que le serveur relais via ses propres commandes.
 - `src/features` : humeur, radio, navigateur privé, assistant
 - `src/security` : chiffrement AES-256-GCM, mots de passe, verrou du coffre-fort
 - `src/state` : comptes, données chiffrées, réglages
+- `src/cloud` : sessions Supabase chiffrées, copie locale et synchronisation
+- `supabase/` : migration SQL, politiques d'accès, fonction de suppression et tests
 - `shared/assistant-contract.ts` : outils de l'assistant, communs à l'application et au serveur
 - `server/` : serveur relais de l'assistant (la clé de l'API n'est jamais dans l'application)
 
 ## Le serveur (dossier `server/`)
 
-L'application enregistre les comptes et leurs données sur le téléphone. Le relais
+L'application conserve une copie sur le téléphone ; le mode d'essai en ligne
+synchronise les comptes concernés avec Supabase. Le relais de l'assistant
 ne conserve ni les conversations ni les photos. Redis garde uniquement les
 compteurs quotidiens associés à une empreinte de l'identifiant aléatoire de
 l'appareil, jusqu'à minuit UTC.
@@ -125,9 +168,9 @@ Le profil `production` désactive le contenu d'exemple : les personnes démarren
 ### 4. À régler avant la publication
 
 - **Comptes nécessaires** : Anthropic (clé de l'API), un hébergeur, Expo, Apple Developer et Google Play Console.
-- **Politique de confidentialité** : obligatoire sur les deux magasins. Elle doit dire que les données restent sur le téléphone, et que les messages envoyés à l'assistant et la photo du scan transitent par le serveur vers Anthropic.
-- **Données de santé** : tant qu'elles restent sur le téléphone, aucun hébergement certifié n'est requis. Les stocker sur un serveur imposerait en France un hébergeur certifié HDS.
-- **Mot de passe oublié** : les comptes sont locaux, il n'existe donc pas de réinitialisation par e-mail. À expliquer aux personnes, ou à construire avec des comptes en ligne.
+- **Politique de confidentialité** : décrire les deux modes de compte et les transmissions à Supabase et à l'assistant selon les fonctions utilisées.
+- **Données de santé** : avant d'activer une vraie synchronisation, examiner les traitements, les prestataires, la conservation et les obligations d'hébergement applicables. Le mode d'essai Supabase actuel est réservé aux données fictives.
+- **Mot de passe oublié** : les comptes en ligne utilisent le code envoyé par Supabase ; les comptes locaux n'ont pas de récupération par e-mail.
 - **Radio** : vérifier les conditions de reprise des flux auprès de chaque station.
 - **Actualités** : les flux de franceinfo et de Yahoo sont prévus pour un usage personnel ; vérifier leurs conditions avant une diffusion publique. Les adresses des flux sont dans `shared/news.ts`.
 

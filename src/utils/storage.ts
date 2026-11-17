@@ -2,10 +2,14 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as SecureStore from 'expo-secure-store';
 import { Platform } from 'react-native';
 import { createJsonStorage, createMemoryStorage } from './json-storage';
+import { createFileBackedStorage } from './file-backed-storage';
+import { createStorageFiles } from './storage-files';
 
 /** Stockage simple (non chiffré par l'application) de valeurs JSON. */
 const previewStorage = createMemoryStorage();
-export const kv = createJsonStorage(Platform.OS === 'web' ? previewStorage : AsyncStorage);
+export const kv = createJsonStorage(Platform.OS === 'web'
+  ? previewStorage
+  : createFileBackedStorage(AsyncStorage, createStorageFiles()));
 
 /**
  * Les secrets ne quittent pas l'appareil : ils ne sont lisibles que lorsque

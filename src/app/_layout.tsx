@@ -12,7 +12,7 @@ import { C } from '../theme';
 import { DialogProvider, SideMenuProvider } from '../ui';
 
 function Root() {
-  const { ready, reduceMotion, storageError, retrySave, user } = useStore();
+  const { ready, reduceMotion, storageError, retrySave, user, accountMode, cloudAvailable } = useStore();
   const [fontsLoaded, fontError] = useFonts({ Nunito_400Regular, Nunito_600SemiBold, Nunito_700Bold });
 
   // Sur iPhone, le contenu est flouté dans le sélecteur d'applications : les données de santé n'y apparaissent pas.
@@ -32,9 +32,10 @@ function Root() {
       <StatusBar style="dark" />
       <SideMenuProvider>
         <View style={{ flex: 1 }}>
-          {(Platform.OS === 'web' || storageError) && (
+          {(Platform.OS === 'web' || storageError || (cloudAvailable && accountMode === 'cloud')) && (
             <SafeAreaView edges={['top']} style={{ backgroundColor: C.ivory, paddingHorizontal: 20, paddingBottom: 10 }}>
-              {Platform.OS === 'web' && <Text style={{ color: C.title, paddingTop: 10 }}>Aperçu temporaire : utilisez uniquement des données fictives. Comptes et données sont oubliés au rechargement.</Text>}
+              {Platform.OS === 'web' && <Text style={{ color: C.title, paddingTop: 10 }}>Aperçu web : données fictives uniquement. La copie locale et la connexion sont oubliées au rechargement.</Text>}
+              {cloudAvailable && accountMode === 'cloud' && <Text style={{ color: C.title, paddingTop: 10 }}>Essai en ligne : données fictives uniquement. Les informations synchronisées restent dans votre compte en ligne.</Text>}
               {!!storageError && <Text accessibilityRole="alert" style={{ color: C.danger, paddingTop: 10 }}>{storageError}</Text>}
               {!!storageError && !!user && <Pressable accessibilityRole="button" onPress={retrySave} style={{ minHeight: 48, justifyContent: 'center' }}><Text style={{ color: C.primary, fontWeight: 'bold' }}>Réessayer la sauvegarde</Text></Pressable>}
             </SafeAreaView>
