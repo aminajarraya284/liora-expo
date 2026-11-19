@@ -1,5 +1,5 @@
-import { Link, useRouter } from 'expo-router';
-import React, { useState } from 'react';
+import { Link, useLocalSearchParams, useRouter } from 'expo-router';
+import React, { useEffect, useState } from 'react';
 import { View } from 'react-native';
 import { AuthShell } from '../../auth-shell';
 import { CloudAccountChoice } from '../../components/cloud-account-choice';
@@ -9,7 +9,8 @@ import { C, F } from '../../theme';
 import { Btn, Checkbox, Field, OutlineBtn, T, useDialog } from '../../ui';
 
 export default function Login() {
-  const { login, accountMode, resetCloudConnection } = useStore();
+  const { login, accountMode, setAccountMode, resetCloudConnection } = useStore();
+  const params = useLocalSearchParams<{ mode?: string }>();
   const dialog = useDialog();
   const router = useRouter();
   const [email, setEmail] = useState('');
@@ -17,6 +18,10 @@ export default function Login() {
   const [remember, setRemember] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+
+  useEffect(() => {
+    if (params.mode === 'cloud') setAccountMode('cloud');
+  }, [params.mode, setAccountMode]);
 
   const submit = async () => {
     if (busy) return;
@@ -43,6 +48,7 @@ export default function Login() {
         <View style={{ marginTop: 22, alignItems: 'center' }}>
           <T style={{ marginBottom: 12 }}>Vous n’avez pas encore de compte ?</T>
           <OutlineBtn label="Créer un compte" icon="person-add-outline" onPress={() => router.push('/register')} style={{ alignSelf: 'stretch', marginHorizontal: 12 }} />
+          <OutlineBtn label="J’ai une clé d’urgence" icon="key-outline" onPress={() => router.push('/acces-urgence')} style={{ alignSelf: 'stretch', marginHorizontal: 12, marginTop: 12 }} />
         </View>
       }>
       <CloudAccountChoice disabled={busy} onChange={() => { setError(null); setPassword(''); }} />

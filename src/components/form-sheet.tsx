@@ -76,7 +76,7 @@ function FormBody({ title, fields, initial, onClose, onSubmit, onDelete, submitL
     const found: Record<string, string> = {};
     for (const field of fields) {
       const raw = values[field.key];
-      const value = typeof raw === 'string' ? raw.trim() : raw;
+      const value = typeof raw === 'string' && field.type !== 'password' ? raw.trim() : raw;
       const empty = value === undefined || value === null || value === '';
       if (field.required && empty) found[field.key] = 'Ce champ est obligatoire.';
       else if (field.validate && !empty) {
@@ -93,7 +93,10 @@ function FormBody({ title, fields, initial, onClose, onSubmit, onDelete, submitL
     setFormError(null);
     if (Object.keys(found).length) return;
     const clean: FormValues = {};
-    for (const field of fields) clean[field.key] = typeof values[field.key] === 'string' ? values[field.key].trim() : values[field.key];
+    for (const field of fields) {
+      const value = values[field.key];
+      clean[field.key] = typeof value === 'string' && field.type !== 'password' ? value.trim() : value;
+    }
     setBusy(true);
     try {
       const message = await onSubmit(clean);

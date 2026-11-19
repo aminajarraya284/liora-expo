@@ -7,6 +7,8 @@ import React, { useEffect } from 'react';
 import { ActivityIndicator, Platform, Pressable, Text, View } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { RadioProvider } from '../features/radio/RadioProvider';
+import { EmergencyProvider } from '../emergency/use-emergency';
+import { EmergencyAlert } from '../emergency/alert';
 import { StoreProvider, useStore } from '../store';
 import { C } from '../theme';
 import { DialogProvider, SideMenuProvider } from '../ui';
@@ -40,6 +42,7 @@ function Root() {
               {!!storageError && !!user && <Pressable accessibilityRole="button" onPress={retrySave} style={{ minHeight: 48, justifyContent: 'center' }}><Text style={{ color: C.primary, fontWeight: 'bold' }}>Réessayer la sauvegarde</Text></Pressable>}
             </SafeAreaView>
           )}
+          <EmergencyAlert />
           <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: C.bg1 }, animation: reduceMotion ? 'none' : 'default' }} />
         </View>
       </SideMenuProvider>
@@ -52,7 +55,7 @@ export default function Layout() {
     <SafeAreaProvider>
       <StoreProvider>
         <RadioProvider>
-          <Root />
+          <EmergencyProvider><Root /></EmergencyProvider>
         </RadioProvider>
       </StoreProvider>
     </SafeAreaProvider>

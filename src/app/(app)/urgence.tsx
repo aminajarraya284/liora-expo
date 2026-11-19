@@ -48,6 +48,12 @@ export default function Urgence() {
       <Header title="Urgence" right={<CircleBtn icon="ellipsis-vertical" label="Numéros d’urgence" onPress={emergencyNumbers} />} />
       <Hero title="Urgence" subtitle="Un accès rapide aux informations essentielles et à mes contacts d’urgence" />
 
+      <Card style={{ marginBottom: 14 }}>
+        <Row icon="key-outline" title="Clé d’urgence 48h" subtitle="Choisir un proche et les documents accessibles" onPress={() => router.push('/cle-urgence')} />
+        <Divider />
+        <Row icon="enter-outline" title="J’ai reçu une clé" subtitle="Demander l’accès aux documents d’un proche" onPress={() => router.push('/acces-urgence')} />
+      </Card>
+
       <Card>
         <BlockTitle icon="call-outline">Mes contacts d’urgence</BlockTitle>
         {contacts.map((contact) => (

@@ -1,14 +1,16 @@
 import React, { useState } from 'react';
+import { useRouter } from 'expo-router';
 import { Pressable, View } from 'react-native';
 import { PROCHE_FIELDS, saveProche } from '../../forms';
 import { openLink, smsUrl, telUrl } from '../../lib';
 import { type Proche, useStore } from '../../store';
 import { C } from '../../theme';
-import { Avatar, Btn, Card, CircleBtn, Empty, FormSheet, Header, Hero, Icon, OutlineBtn, Screen, T, useDialog, usePalette } from '../../ui';
+import { Avatar, Btn, Card, CircleBtn, Divider, Empty, FormSheet, Header, Hero, Icon, OutlineBtn, Row, Screen, T, useDialog, usePalette } from '../../ui';
 
 export default function Proches() {
   const { data, update } = useStore();
   const dialog = useDialog();
+  const router = useRouter();
   const palette = usePalette('coral');
   const [edit, setEdit] = useState<Proche | 'new' | null>(null);
   const editing = edit && edit !== 'new' ? edit : null;
@@ -28,6 +30,12 @@ export default function Proches() {
     <Screen section="proches" tab="social" speak="Mes proches. Rester en contact avec ceux qui comptent.">
       <Header title="Proches" right={<CircleBtn icon="person-add-outline" label="Ajouter un proche" onPress={() => setEdit('new')} />} />
       <Hero title="Mes proches" subtitle="Rester en contact avec ceux qui comptent" />
+
+      <Card style={{ marginBottom: 14 }}>
+        <Row icon="key-outline" title="Clé d’urgence 48h" subtitle="Confier des documents à un proche choisi" onPress={() => router.push('/cle-urgence')} />
+        <Divider />
+        <Row icon="enter-outline" title="J’ai reçu une clé" subtitle="Accéder aux documents autorisés par un proche" onPress={() => router.push('/acces-urgence')} />
+      </Card>
 
       <View style={{ gap: 12 }}>
         {data.proches.length === 0 && <Empty icon="people-outline" text="Aucun proche pour le moment. Ajoutez les personnes qui comptent pour vous." />}

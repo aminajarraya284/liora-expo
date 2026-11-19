@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test": "node --test functions/delete-account/handler.test.ts tests/engine.test.mjs"
+    "test": "node --test functions/delete-account/handler.test.ts tests/*.test.mjs"
   },
   "devDependencies": {
     "@electric-sql/pglite": "0.5.16"

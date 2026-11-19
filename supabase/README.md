@@ -9,9 +9,10 @@ dans l’application ou dans le dépôt public.
 
 1. Créez un projet Supabase dédié aux essais et notez sa région. Activez la
    confirmation des adresses e-mail. N’activez pas les connexions anonymes.
-2. Dans SQL Editor, relisez puis exécutez la migration
-   `migrations/20261116195329_liora_cloud_trial.sql`. Elle crée les snapshots, les
+2. Dans SQL Editor, relisez puis exécutez les migrations dans l’ordre de leurs
+   noms. `migrations/20261116195329_liora_cloud_trial.sql` crée les snapshots, les
    politiques d’accès, le RPC de synchronisation et le bucket privé `liora-files`.
+   `migrations/20261117211538_liora_emergency_keys.sql` ajoute la clé d’urgence.
    Le schéma `private` ne doit pas être ajouté aux schémas exposés dans Data API.
 3. Dans Authentication → Email Templates, utilisez les fichiers
    `templates/confirmation.html` et `templates/recovery.html`. Ils contiennent
@@ -67,6 +68,43 @@ HTTPS, les politiques RLS et le stockage privé. Les administrateurs du projet
 peuvent lire les données : cette version ne prétend pas fournir un chiffrement
 de bout en bout. L’utilisation avec de vraies données de santé exige une revue
 distincte des traitements, des prestataires et de la configuration.
+
+## Suppression du compte
+
+## Clé d’urgence 48 heures
+
+Le propriétaire choisit un proche, son adresse e-mail et les documents déjà
+synchronisés à autoriser. Son accord explicite active l’accès automatique après
+un délai de refus de 48 heures. Le code est généré aléatoirement dans
+l’application et seule son empreinte SHA-256 est conservée par le serveur.
+Le destinataire utilise un compte avec cette adresse confirmée. Une clé permet
+une seule demande, avec cinq essais au maximum par minute et par compte.
+
+Le serveur calcule les échéances. Après 48 heures, l’accès dure 24 heures.
+Une approbation anticipée démarre immédiatement cette fenêtre de 24 heures.
+Un refus ou une révocation bloque les téléchargements suivants. Le retrait du
+proche ou d’un document autorisé révoque définitivement la clé. Les suppressions
+des comptes concernés suppriment également leurs clés et demandes.
+
+Les demandes apparaissent dans Liora et sont actualisées toutes les 20 secondes
+quand l’application est au premier plan. Les notifications hors application,
+par e-mail ou notification système, restent à intégrer avant une utilisation
+réelle qui dépendrait de la réception immédiate d’une alerte.
+
+La deuxième migration utilise `storage.allow_only_operation('object.get_authenticated')`.
+Cette fonction doit être disponible dans la version Storage du projet.
+La permission du destinataire couvre uniquement le téléchargement authentifié
+du document autorisé. La signature d’URL, la liste des objets, leur copie et
+leur modification sont refusées. Vérifiez la présence de cette fonction avant
+d’appliquer la migration sur une ancienne installation Storage. Les noms des
+opérations sont confirmés par la [documentation des fonctions Storage](https://supabase.com/docs/guides/storage/schema/helper-functions)
+et le [code officiel des opérations](https://github.com/supabase/storage/blob/master/src/http/routes/operations.ts).
+
+Les tests PostgreSQL locaux couvrent les délais, la séparation des comptes,
+la limitation des essais, les révocations et les politiques Storage. Les appels
+Auth et Storage réels restent à vérifier avec deux comptes fictifs sur le
+projet Supabase d’essai, notamment le refus des URL signées. Un document déjà
+enregistré par le destinataire reste une copie qu’une révocation ne peut effacer.
 
 ## Suppression du compte
 
