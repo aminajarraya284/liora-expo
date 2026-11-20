@@ -175,6 +175,27 @@ lecture croisée refusée, fichier privé, modification hors ligne puis reprise,
 nouveau téléphone, conflit de deux appareils, déconnexion globale et suppression.
 Le code de suppression se teste avec `npm test`, sans vrai appel administratif.
 
+### Premier essai de fichiers sur le projet hébergé
+
+Depuis la racine du dépôt, après `npm ci`, préparez deux comptes d’essai
+distincts dont l’e-mail est confirmé. Dans un fichier local `.env.trial`
+(ignoré par Git), définissez `EXPO_PUBLIC_SUPABASE_URL`,
+`EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, `LIORA_TEST_OWNER_EMAIL`,
+`LIORA_TEST_OWNER_PASSWORD`, `LIORA_TEST_OTHER_EMAIL` et
+`LIORA_TEST_OTHER_PASSWORD`. Utilisez uniquement le projet et les comptes
+fictifs réservés aux essais.
+
+```sh
+node --env-file=.env.trial --test supabase/tests/hosted-storage.mjs
+```
+
+Le contrôle ouvre deux sessions indépendantes du propriétaire et une session
+de l’autre compte. Il dépose un petit fichier fictif par compte, compare les
+octets relus, vérifie le refus de lecture dans les deux sens, puis nettoie les
+fichiers créés et ferme ses sessions. Complétez-le sur les deux téléphones
+avec l’import depuis le coffre-fort, la synchronisation et l’ouverture du
+document après reconnexion.
+
 Avant toute utilisation réelle, définissez aussi la sauvegarde **de la base et
 des fichiers**, puis testez une restauration. La synchronisation de deux appareils
 ne constitue pas une sauvegarde indépendante contre une suppression accidentelle.
