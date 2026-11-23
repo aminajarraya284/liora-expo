@@ -200,6 +200,27 @@ Avant toute utilisation réelle, définissez aussi la sauvegarde **de la base et
 des fichiers**, puis testez une restauration. La synchronisation de deux appareils
 ne constitue pas une sauvegarde indépendante contre une suppression accidentelle.
 
+## Suivre les demandes des familles pilotes
+
+La [démo publique](https://aminajarraya284.github.io/liora-expo/) reçoit les demandes
+via le bouton **Participer au pilote**. Les adresses sont conservées dans
+`private.liora_pilot_requests`. Elles sont accessibles depuis la session
+d’administration du projet et restent hors de l’API publique.
+
+Ouvrez la [requête enregistrée dans Supabase](https://supabase.com/dashboard/project/eyxkfzdjkyftgdnsqalh/sql/8d0a1df3-6ca9-4436-9862-a2058260e2ac)
+et cliquez sur **Run** pour afficher les demandes les plus récentes en premier.
+Vous pouvez aussi copier le texte ci-dessous dans l’éditeur SQL du projet.
+Un résultat vide signifie qu’aucune demande n’est enregistrée.
+
+```sql
+select email, requested_at
+from private.liora_pilot_requests
+order by requested_at desc;
+```
+
+Le formulaire confirme l’enregistrement dans le navigateur. La prise de contact
+avec les familles se fait manuellement à partir de cette liste.
+
 ## Sources utilisées
 
 - [Changelog Supabase et rupture CLI v3](https://supabase.com/changelog/supabase-cli-v3)
