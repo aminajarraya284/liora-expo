@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="fr"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Liora · Une démo à découvrir en famille</title>
+<meta name="description" content="Explorez l’agenda de Camille et essayez la Clé 48 h avec des documents fictifs.">
+<link rel="stylesheet" href="style.css"><script src="pilot-config.js" defer></script><script src="demo.js" defer></script>
+</head><body>
+<header><a class="brand" href="#accueil">Liora</a><nav aria-label="Navigation principale"><a href="#camille">La démo</a><a href="#pilote">Le pilote</a></nav></header>
+<main>
+<section id="accueil" class="hero"><div><p class="eyebrow">Liora en famille</p><h1>Vos papiers, entre de bonnes mains.</h1>
+<p>Préparez les documents utiles avec un parent et choisissez ensemble qui pourra les consulter.</p>
+<div class="actions"><a class="primary" href="#camille">Essayer Liora</a><a class="secondary" href="#pilote">Participer au pilote</a></div></div>
+<img src="famille.jpg" alt="" width="640" height="430"></section>
+<section id="camille" hidden><p class="eyebrow">Profil fictif · Démonstration</p><h1>Bonjour Camille</h1>
+<p>Retrouvez votre prochain rendez-vous et préparez une clé pour un proche.</p>
+<div class="cards"><article><h2>Mon agenda</h2><h3>Déjeuner avec Sophie</h3><p>Mercredi à 12 h 30<br>Brasserie des Lilas, Lyon</p></article>
+<article><h2>Mes proches</h2><h3>Sophie et Marc</h3><p>Votre fille et votre fils. Vous pouvez choisir l’un d’eux pour cette démonstration.</p></article></div>
+<article class="key"><p class="eyebrow">Documents autorisés</p><h2>Ma Clé 48 h</h2>
+<p>Un proche demande un accès. Camille dispose de 48 heures pour refuser. L’accès accordé dure 24 heures.</p>
+<form id="prepare"><label for="relative">Choisir un proche</label><select id="relative"><option>Sophie</option><option>Marc</option></select>
+<fieldset><legend>Choisir les documents fictifs</legend>
+<label><input type="checkbox" name="doc" value="Contrat d’assurance" checked> Contrat d’assurance</label>
+<label><input type="checkbox" name="doc" value="Attestation de mutuelle"> Attestation de mutuelle</label></fieldset>
+<button class="primary">Simuler la demande du proche</button></form>
+<div id="scenario" hidden><p id="state" role="status"></p><ul id="documents"></ul><div class="actions" id="controls"></div></div>
+<p id="demo-error" role="alert"></p></article></section>
+<section id="pilote" hidden><p class="eyebrow">Familles pilotes</p><h1>Essayer Liora en famille</h1>
+<p>Laissez votre adresse pour que l’équipe Liora puisse vous recontacter au sujet du pilote.</p>
+<form id="signup"><label for="email">Votre adresse e-mail</label><input type="email" id="email" autocomplete="email" maxlength="254" required>
+<label class="consent"><input id="agree" type="checkbox" required> J’accepte que l’équipe Liora utilise mon adresse pour me recontacter au sujet de cet essai.</label>
+<button class="primary" id="submit">Envoyer ma demande</button><p role="status" id="feedback"></p></form>
+<p class="note">Votre adresse est enregistrée dans le projet Supabase privé de Liora. Seule l’équipe chargée du pilote peut consulter les demandes. Vous pourrez demander son retrait en répondant à notre prise de contact.</p></section>
+</main><footer>Liora · Démonstration avec des données fictives</footer>
+</body></html>
